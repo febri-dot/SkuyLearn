@@ -1,9 +1,12 @@
 from app.views.main_frame import SkuylearnApp
-from app.connection import init_db, initlize_dummy
+from app.connection import Database
 
-if __name__ == "__main__":
-   init_db()
-   initlize_dummy()
-   
+def start_app():
+   db = Database()
+   db.init_db() 
+
    app = SkuylearnApp()
    app.mainloop()
+
+if __name__ == "__main__":
+   start_app()

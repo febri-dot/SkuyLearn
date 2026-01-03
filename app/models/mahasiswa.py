@@ -8,3 +8,6 @@ class Mahasiswa(User):
 
    def get_dashboard_info(self):
       return f"Dashboard Mahasiswa: {self.name} (NPM: {self.npm})"
+   
+   def get_course_frame(self):
+      return "StudentCourseFrame"

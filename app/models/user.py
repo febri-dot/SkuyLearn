@@ -10,3 +10,6 @@ class User:
 
    def get_dashboard_info(self):
       return f"Selamat datang, {self.__username}!"
+
+   def get_course_frame(self):
+      return "StudentCourseFrame"

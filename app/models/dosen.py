@@ -8,3 +8,6 @@ class Dosen(User):
 
    def get_dashboard_info(self):
       return f"Dashboard Dosen: {self.name} (NIDN: {self.nidn})"
+   
+   def get_course_frame(self):
+      return "LecturerCourseFrame"

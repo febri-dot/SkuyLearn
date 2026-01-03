@@ -6,3 +6,6 @@ class Admin(User):
 
    def get_dashboard_info(self):
       return f"System Administrator: {self.username} (All Access Granted)"
+   
+   def get_course_frame(self):
+      return "AdminCourseFrame"
