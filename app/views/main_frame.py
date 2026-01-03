@@ -19,7 +19,11 @@ class SkuylearnApp(tk.Tk):
       self.content_area.pack(side="right", fill="both", expand=True)
 
       self.frames = {}
-      for F in (LoginFrame, DashboardFrame):
+      frames = [
+         LoginFrame, 
+         DashboardFrame
+      ]
+      for F in frames:
          page_name = F.__name__
          frame = F(parent=self.content_area, controller=self)
          self.frames[page_name] = frame

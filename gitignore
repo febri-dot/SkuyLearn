@@ -1,0 +1,20 @@
+# Python bytecode (Sampah Python)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Database (Agar data di laptopmu tidak bentrok dengan teman)
+*.db
+
+# Folder IDE (Jika temanmu pakai VS Code atau PyCharm)
+.vscode/
+.idea/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Virtual Environment (Jika pakai env)
+venv/
+env/
