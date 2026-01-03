@@ -4,7 +4,7 @@ import os
 def get_connection():
    """Establish a connection to the SQLite database."""
    try:
-      conn = sqlite3.connect('skuy_learn.db')
+      conn = sqlite3.connect('skuylearn.db')
       conn.execute("PRAGMA foreign_keys = ON;")
       return conn
    except sqlite3.Error as e:
@@ -109,3 +109,45 @@ def init_db():
          print(f"Failed to create tables: {e}")
       finally:
          conn.close()
+
+def initlize_dummy():
+   """Initialize dummy data ONLY if the users table is empty."""
+   conn = get_connection()
+   if not conn:
+      return
+
+   try:
+      cursor = conn.cursor()
+      
+      cursor.execute("SELECT COUNT(*) FROM users")
+      count = cursor.fetchone()[0]
+
+      if count == 0:
+         print("Database is empty. Inserting dummy data...")
+
+         users_dummy = [
+               ('admin01', '123', 'admin'),
+               ('2021001', '123', 'mahasiswa'),
+               ('990011', '123', 'dosen')
+         ]
+         cursor.executemany("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", users_dummy)
+
+         cursor.execute("""
+               INSERT INTO mahasiswa (npm, name, birthday, gender, address, phone_number)
+               VALUES (2021001, 'Andi Wijaya', '2003-05-15', 'Male', 'Jakarta St. No. 5', '08123456789')
+         """)
+
+         cursor.execute("""
+               INSERT INTO dosen (nidn, name, birthday, gender, address, phone_number)
+               VALUES (990011, 'Dr. Budi Santoso, M.Kom', '1985-10-20', 'Male', 'Bandung No. 10', '08987654321')
+         """)
+
+         conn.commit()
+         print("Dummy data successfully initialized.")
+      else:
+         print("Database already has data. Skipping dummy initialization.")
+
+   except sqlite3.Error as e:
+      print(f"Error during dummy initialization: {e}")
+   finally:
+      conn.close()
