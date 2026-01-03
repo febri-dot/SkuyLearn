@@ -1,8 +1,9 @@
-from app.connection import *
+from app.views.main_frame import SkuylearnApp
+from app.connection import init_db, initlize_dummy
 
 if __name__ == "__main__":
-   print("--- Starting SkuyLearn System ---")
-   init_db()         
+   init_db()
    initlize_dummy()
    
-   print("System is ready. Launching Interface...")
+   app = SkuylearnApp()
+   app.mainloop()
