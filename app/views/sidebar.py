@@ -35,10 +35,10 @@ class SidebarFrame(tk.Frame):
          dashboard_frame = user.get_dashboard_frame()
          
          tk.Button(self, text="Dashboard", **btn_style,
-            command=lambda f=dashboard_frame: self.controller.show_frame(f)).pack(fill="x", pady=1)
+                   command=lambda f=dashboard_frame: self.controller.show_frame(f)).pack(fill="x", pady=1)
          
          tk.Button(self, text="My Course", **btn_style,
-                     command=lambda: self.controller.show_frame(target_frame)).pack(fill="x", pady=1)
+                   command=lambda: self.controller.show_frame(target_frame)).pack(fill="x", pady=1)
         
       tk.Button(self, text="Profile", **btn_style,
                command=lambda: self.controller.show_frame("ProfileFrame")).pack(fill="x", pady=1)

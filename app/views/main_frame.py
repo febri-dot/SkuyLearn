@@ -3,8 +3,9 @@ from app.views.login_ui import LoginFrame
 from app.views.admin.dashboard_ui import DashboardFrame
 from app.views.dosen.dashboard_ui import DashboardDosen
 from app.views.mahasiswa.dashboard_ui import DashboardMahasiswa
+from app.views.mahasiswa.assignment_ui import AssignmentMahasiswaFrame
 from app.views.admin.student_data_ui import StudentDataFrame
-from app.views.mahasiswa_mycourse_ui import MahasiswaMyCourseFrame
+from app.views.mycourse_ui import MyCourseFrame
 from app.views.sidebar import SidebarFrame
 from app.views.profile_ui import ProfileFrame
 
@@ -35,7 +36,8 @@ class SkuylearnApp(tk.Tk):
          {"class": StudentDataFrame, "access": "admin"},
          {"class": DashboardDosen, "access": "dosen"},
          {"class": DashboardMahasiswa, "access": "mahasiswa"},
-         {"class": MahasiswaMyCourseFrame, "access": "any", "alias": "CoursesListFrame"}
+         {"class": MyCourseFrame, "access": "any"},
+         {"class": AssignmentMahasiswaFrame, "access": "any"}
       ]
          
       for page in pages:
