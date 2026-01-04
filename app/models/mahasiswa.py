@@ -10,4 +10,4 @@ class Mahasiswa(User):
       return f"Dashboard Mahasiswa: {self.name} (NPM: {self.npm})"
    
    def get_course_frame(self):
-      return "StudentCourseFrame"
+      return "MahasiswaMyCourseFrame"

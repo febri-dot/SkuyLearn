@@ -22,4 +22,4 @@ class User:
             return "HomeFrame"
 
    def get_course_frame(self):
-      return "StudentCourseFrame"
+      return "MahasiswaMyCourseFrame"
