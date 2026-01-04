@@ -4,7 +4,8 @@ class MyCourseController:
     @staticmethod
     def get_courses_for_user(user):
         """
-        Fetch courses based on user role (Mahasiswa, Dosen, or Admin).
+        Fetch courses based on user role (Mahasiswa, Dosen, or Admin)
+        and RETURN LIST OF DICT (WAJIB untuk UI).
         """
         db = Database()
 
@@ -17,7 +18,18 @@ class MyCourseController:
                 JOIN dosen d ON c.owner = d.nidn
                 WHERE e.npm = ?
             """
-            return db.fetch_all(query, (user.npm,))
+            rows = db.fetch_all(query, (user.npm,))
+
+            return [
+                {
+                    "id": r[0],
+                    "course_name": r[1],
+                    "description": r[2],
+                    "enrollment_key": r[3],
+                    "dosen": r[4]
+                }
+                for r in rows
+            ]
 
         # ================= DOSEN =================
         elif user.role == "dosen":
@@ -27,16 +39,40 @@ class MyCourseController:
                 JOIN dosen d ON c.owner = d.nidn
                 WHERE c.owner = ?
             """
-            return db.fetch_all(query, (user.nidn,))
+            rows = db.fetch_all(query, (user.nidn,))
 
-        # ================= ADMIN (NEW: Get All) =================
+            return [
+                {
+                    "id": r[0],
+                    "course_name": r[1],
+                    "description": r[2],
+                    "enrollment_key": r[3],
+                    "owner": r[4],
+                    "dosen": r[5]
+                }
+                for r in rows
+            ]
+
+        # ================= ADMIN =================
         elif user.role == "admin":
             query = """
                 SELECT c.id, c.course_name, c.description, c.enrollment_key, c.owner, d.name
                 FROM courses c
                 LEFT JOIN dosen d ON c.owner = d.nidn
             """
-            return db.fetch_all(query)
+            rows = db.fetch_all(query)
+
+            return [
+                {
+                    "id": r[0],
+                    "course_name": r[1],
+                    "description": r[2],
+                    "enrollment_key": r[3],
+                    "owner": r[4],
+                    "dosen": r[5]
+                }
+                for r in rows
+            ]
 
         return []
 
