@@ -3,6 +3,7 @@ from app.views.login_ui import LoginFrame
 from app.views.admin.dashboard_ui import DashboardFrame
 from app.views.student_data_ui import StudentDataFrame
 from app.views.sidebar import SidebarFrame
+from app.views.profile_ui import ProfileFrame
 
 class SkuylearnApp(tk.Tk):
    def __init__(self):
@@ -26,7 +27,8 @@ class SkuylearnApp(tk.Tk):
       pages = [
          {"class": LoginFrame, "access": "any"},
          {"class": DashboardFrame, "access": "any"},
-         {"class": StudentDataFrame, "access": "admin"}
+         {"class": StudentDataFrame, "access": "admin"},
+         {"class": ProfileFrame, "access": "any"}
       ]
 
       for page in pages:
@@ -54,7 +56,6 @@ class SkuylearnApp(tk.Tk):
          frame.refresh()
          
       frame.tkraise()
-
    def handle_logout(self):
       from tkinter import messagebox
       if messagebox.askyesno("Logout", "Are you sure?"):
