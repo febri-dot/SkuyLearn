@@ -10,4 +10,4 @@ class Dosen(User):
       return f"Dashboard Dosen: {self.name} (NIDN: {self.nidn})"
    
    def get_course_frame(self):
-      return "LecturerCourseFrame"
+      return "MahasiswaMyCourseFrame"
