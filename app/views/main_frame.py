@@ -1,6 +1,8 @@
 import tkinter as tk
 from app.views.login_ui import LoginFrame
 from app.views.admin.dashboard_ui import DashboardFrame
+from app.views.dosen.dashboard_ui import DashboardDosen
+from app.views.mahasiswa.dashboard_ui import DashboardMahasiswa
 from app.views.student_data_ui import StudentDataFrame
 from app.views.sidebar import SidebarFrame
 
@@ -25,8 +27,10 @@ class SkuylearnApp(tk.Tk):
       self.frames = {}
       pages = [
          {"class": LoginFrame, "access": "any"},
-         {"class": DashboardFrame, "access": "any"},
-         {"class": StudentDataFrame, "access": "admin"}
+         {"class": DashboardFrame, "access": "admin"},
+         {"class": StudentDataFrame, "access": "admin"},
+         {"class": DashboardDosen, "access": "dosen"},
+         {"class": DashboardMahasiswa, "access": "mahasiswa"}
       ]
 
       for page in pages:
