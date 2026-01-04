@@ -31,13 +31,13 @@ class SidebarFrame(tk.Frame):
       
       tk.Button(self, text="Dashboard", **btn_style,
                command=lambda: self.controller.show_frame("DashboardFrame")).pack(fill="x", pady=1)
-
+      
       user = self.controller.current_user
       user = self.controller.current_user
       if user:
          target_frame = user.get_course_frame()
          tk.Button(self, text="My Course", **btn_style,
-                     command=lambda: self.controller.show_frame(target_frame)).pack(fill="x", pady=1)
+                     command=lambda: self.controller.show_frame("MahasiswaMyCourseFrame")).pack(fill="x", pady=1)
 
       tk.Button(self, text="Logout", bg="#e74c3c", fg="white", relief="flat",
                font=("Arial", 10, "bold"), cursor="hand2",

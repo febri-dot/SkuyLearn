@@ -67,7 +67,7 @@ class RegisterFrame(tk.Frame):
 
          if user.status:
             
-         else :
+         else:
             messagebox.showerror("Registration failed", academic_account.message)
          
          
