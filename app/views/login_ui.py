@@ -58,7 +58,7 @@ class LoginFrame(tk.Frame):
 
          if user_session.role == "admin":
             self.controller.show_frame("DashboardFrame")
-         if user_session.role == "dosen":
+         elif user_session.role == "dosen":
             self.controller.show_frame("DashboardDosen")
          elif user_session.role == "mahasiswa":
             self.controller.show_frame("DashboardMahasiswa")
