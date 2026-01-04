@@ -149,12 +149,117 @@ class Database:
    def initialize_dummy(self):
       """Isi data dummy jika tabel users kosong."""
       conn = self.get_connection()
-      if not conn: return
+      if not conn:
+         return
+
       try:
          cursor = conn.cursor()
+
+         # Cek apakah sudah ada data
          cursor.execute("SELECT COUNT(*) FROM users")
-         if cursor.fetchone()[0] == 0:
-               print("Inserting dummy data...")
-               conn.commit()
+         if cursor.fetchone()[0] > 0:
+               print("Dummy data already exists.")
+               return
+
+         print("Inserting dummy data...")
+
+         # ================= USERS =================
+         users = [
+               ("180001", "123", "mahasiswa"),
+               ("180002", "123", "mahasiswa"),
+               ("9001", "123", "dosen"),
+               ("9002", "123", "dosen"),
+               ("admin", "admin", "admin")
+         ]
+
+         cursor.executemany(
+               "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+               users
+         )
+
+         # ================= MAHASISWA =================
+         mahasiswa = [
+               (180001, "Andi Pratama", "2003-01-10", "L", "Jakarta", "081234567890"),
+               (180002, "Siti Aisyah", "2003-05-21", "P", "Bandung", "082345678901")
+         ]
+
+         cursor.executemany(
+               """INSERT INTO mahasiswa 
+                  (npm, name, birthday, gender, address, phone_number)
+                  VALUES (?, ?, ?, ?, ?, ?)""",
+               mahasiswa
+         )
+
+         # ================= DOSEN =================
+         dosen = [
+               (9001, "Dr. Budi Santoso", "1980-02-14", "L", "Depok", "0811111111"),
+               (9002, "Dr. Rina Lestari", "1985-07-09", "P", "Bogor", "0822222222")
+         ]
+
+         cursor.executemany(
+               """INSERT INTO dosen
+                  (nidn, name, birthday, gender, address, phone_number)
+                  VALUES (?, ?, ?, ?, ?, ?)""",
+               dosen
+         )
+
+         # ================= COURSES =================
+         courses = [
+               ("Pemrograman Python", "Belajar Python Dasar", "PY123", 9001),
+               ("Basis Data", "Konsep Database Relasional", "DB123", 9002)
+         ]
+
+         cursor.executemany(
+               """INSERT INTO courses 
+                  (course_name, description, enrollment_key, owner)
+                  VALUES (?, ?, ?, ?)""",
+               courses
+         )
+
+         # ================= ENROLLMENT =================
+         enrollment = [
+               (1, 180001),
+               (1, 180002),
+               (2, 180001)
+         ]
+
+         cursor.executemany(
+               """INSERT INTO enrollment_class (course_id, npm)
+                  VALUES (?, ?)""",
+               enrollment
+         )
+
+         # ================= COURSE MATERIALS =================
+         materials = [
+               (1, "Pengenalan Python", "Materi dasar Python", None),
+               (2, "Normalisasi Database", "Materi normalisasi", None)
+         ]
+
+         cursor.executemany(
+               """INSERT INTO course_materials
+                  (course_id, title, content, content_path)
+                  VALUES (?, ?, ?, ?)""",
+               materials
+         )
+
+         # ================= ASSIGNMENTS =================
+         assignments = [
+               (1, "Tugas 1 Python", "Buat program kalkulator", None, "2026-02-01"),
+               (2, "Tugas 1 Basis Data", "ERD Sistem Akademik", None, "2026-02-05")
+         ]
+
+         cursor.executemany(
+               """INSERT INTO assignments
+                  (course_id, title, description, assignment_path, due_date)
+                  VALUES (?, ?, ?, ?, ?)""",
+               assignments
+         )
+
+         conn.commit()
+         print("Dummy data inserted successfully.")
+
+      except sqlite3.Error as e:
+         print("Error inserting dummy data:", e)
+         conn.rollback()
       finally:
          conn.close()

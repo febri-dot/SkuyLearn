@@ -56,6 +56,13 @@ class LoginFrame(tk.Frame):
          self.username_entry.delete(0, tk.END)
          self.password_entry.delete(0, tk.END)
 
-         self.controller.show_frame("DashboardFrame")
+         if user_session.role == "admin":
+            self.controller.show_frame("DashboardFrame")
+         if user_session.role == "dosen":
+            self.controller.show_frame("DashboardDosen")
+         elif user_session.role == "mahasiswa":
+            self.controller.show_frame("DashboardMahasiswa")
+         else:
+            messagebox.showerror("Error", "Unknown role")
       else:
          messagebox.showerror("Authentication Failed", "Invalid username or password")
