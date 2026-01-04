@@ -2,69 +2,84 @@ import tkinter as tk
 from tkinter import messagebox
 from app.controllers.auth_manager import AuthManager
 
-class RegisterWindow(tk.Toplevel): 
-   def __init__(self, parent, target_role="MAHASISWA"):
+class RegisterWindow(tk.Toplevel):
+   def __init__(self, parent, role="MAHASISWA"):
       super().__init__(parent)
-      self.target_role = target_role.upper()
-      self.title(f"Add New {self.target_role.capitalize()}")
-      
-      # Setup Window agar di tengah screen
-      self.geometry("400x550")
-      self.configure(bg="#f0f2f5")
+      self.role = role.upper()
+      self.title(f"Add New {self.role.capitalize()}")
+      self.geometry("450x670")
+      self.configure(bg="#f8f9fa")
       self.resizable(False, False)
+      self.grab_set() # Focus on this window
 
-      # UI Card
-      self.card = tk.Frame(self, bg="white", padx=30, pady=30, 
-                           highlightbackground="#d1d1d1", highlightthickness=1)
-      self.card.pack(expand=True, padx=20, pady=20)
+      # --- 1. DEFINISI main_frame (PENTING: Harus sebelum looping fields) ---
+      self.main_frame = tk.Frame(self, bg="white", padx=30, pady=25, 
+                                 highlightbackground="#d1d1d1", highlightthickness=1)
+      self.main_frame.pack(expand=True, fill="both", padx=20, pady=20)
 
-      # Header dinamis berdasarkan Role
-      tk.Label(self.card, text=f"ADD {self.target_role}", bg="white", fg="#2c3e50", 
-               font=("Helvetica", 18, "bold")).pack(pady=(0, 20))
+      # 2. Generate ID automatically from AuthManager
+      # Pastikan di AuthManager sudah ada fungsi generate_next_id
+      next_id = AuthManager.generate_next_id(self.role)
 
-      # --- Input Fields ---
-      # Username/ID (NPM/NIDN)
-      tk.Label(self.card, text="Username", bg="white", font=("Arial", 9, "bold")).pack(anchor="w")
-      self.username_entry = tk.Entry(self.card, font=("Arial", 11), width=30, bg="#f8f9fa", relief="flat")
-      self.username_entry.pack(pady=(5, 15), ipady=8)
+      # Header Title
+      tk.Label(self.main_frame, text=f"REGISTRATION: {self.role}", 
+               font=("Helvetica", 16, "bold"), bg="white", fg="#2c3e50").pack(pady=(0, 20))
 
-      # Password
-      tk.Label(self.card, text="Password", bg="white", font=("Arial", 9, "bold")).pack(anchor="w")
-      self.password_entry = tk.Entry(self.card, font=("Arial", 11), width=30, bg="#f8f9fa", relief="flat", show="•")
-      self.password_entry.pack(pady=(5, 15), ipady=8)
+      # --- 3. Fields Area ---
+      self.entries = {}
+      id_label = "Generated NPM" if self.role == "MAHASISWA" else "Generated NIDN"
+      
+      fields = [
+         (id_label, "id_num", next_id), 
+         ("Full Name", "name", ""),
+         ("Birthday (YYYY-MM-DD)", "birthday", ""),
+         ("Gender (M/F)", "gender", ""),
+         ("Address", "address", ""),
+         ("Phone Number", "phone", "")
+      ]
 
-      # Role (Hidden/Locked)
-      tk.Label(self.card, text="Role", bg="white", font=("Arial", 9, "bold")).pack(anchor="w")
-      self.role_label = tk.Label(self.card, text=self.target_role, bg="#e9ecef", fg="#495057", 
-                                 font=("Arial", 10, "bold"), width=28, pady=10)
-      self.role_label.pack(pady=(5, 25))
+      for label_text, key, default_val in fields:
+         tk.Label(self.main_frame, text=label_text, bg="white", 
+                  font=("Arial", 9, "bold"), fg="#34495e").pack(anchor="w")
+         
+         entry = tk.Entry(self.main_frame, font=("Arial", 11), bg="#f1f3f5", 
+                           relief="flat", highlightthickness=1, highlightbackground="#dee2e6")
+         entry.insert(0, default_val)
+         
+         # Lock ID field so it cannot be edited
+         if key == "id_num":
+               entry.config(state="readonly", readonlybackground="#e9ecef")
+               
+         entry.pack(fill="x", pady=(5, 12), ipady=7)
+         self.entries[key] = entry
 
       # Submit Button
-      self.btn_save = tk.Button(self.card, text="SAVE DATA", bg="#3498db", fg="white", 
-                                 font=("Arial", 11, "bold"), width=25, height=2,
-                                 relief="flat", cursor="hand2", command=self.handle_save)
-      self.btn_save.pack()
+      self.btn_save = tk.Button(self.main_frame, text="SAVE & CREATE ACCOUNT", 
+                                 bg="#2ecc71", fg="white", font=("Arial", 11, "bold"), 
+                                 height=2, relief="flat", cursor="hand2", 
+                                 command=self.handle_save)
+      self.btn_save.pack(fill="x", pady=(15, 0))
 
    def handle_save(self):
-      username = self.username_entry.get()
-      password = self.password_entry.get()
-      role = self.target_role.lower()
-
-      if not username or not password:
-         messagebox.showwarning("Warning", "Please fill all fields!")
+      # Get data from entries
+      # Special handling for readonly field to get its content
+      self.entries['id_num'].config(state='normal')
+      data = {key: entry.get().strip() for key, entry in self.entries.items()}
+      self.entries['id_num'].config(state='readonly')
+      
+      # Validation
+      if any(not val for val in data.values()):
+         messagebox.showwarning("Input Error", "All profile fields are required!")
          return
 
-      # Logika Validasi & Simpan (Reuse AuthManager)
-      academic_check = AuthManager.check_academic_identity(username, role)
-      
-      if academic_check["status"]:
-         # 2. Eksekusi Register
-         result = AuthManager.register_user(username, password, role)
-         if result["status"]:
-               messagebox.showinfo("Success", f"{self.target_role} registered successfully!")
-               self.master.refresh()
-               self.destroy() # Tutup pop-up
-         else:
-               messagebox.showerror("Error", result["message"])
+      # Call AuthManager to save profile and account
+      # Pastikan fungsi register_new_user di AuthManager juga menggunakan pesan Inggris
+      success, message = AuthManager.register_new_user(data, self.role)
+
+      if success:
+         messagebox.showinfo("Success", message)
+         if hasattr(self.master, 'refresh'):
+               self.master.refresh() # Auto-refresh the table in the background
+         self.destroy()
       else:
-         messagebox.showerror("Failed", academic_check["message"])
+         messagebox.showerror("Error", message)

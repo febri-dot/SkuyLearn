@@ -63,22 +63,102 @@ class AuthManager:
       }
 
    @staticmethod
-   def register_user(username, password, role):
-      """Create a new user account."""
+   def register_new_user(data, role):
       db = Database()
       
-      # 1. Check if the username is already taken
-      check = db.fetch_one("SELECT username FROM users WHERE username = ?", (username,))
-      if check:
-         return {"status": False, "message": "This ID/Username is already registered."}
+      role_lower = role.lower()
+      target_table = "mahasiswa" if role_lower == "mahasiswa" else "dosen"
+      id_col = "npm" if role_lower == "mahasiswa" else "nidn"
 
-      # 2. Insert into the database
-      success = db.execute_query(
-         "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
-         (username, password, role)
+      # --- STEP 1: Insert into USERS table FIRST ---
+      # This satisfies the Foreign Key requirement
+      query_user = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)"
+      params_user = (data['id_num'], data['id_num'], role_lower)
+
+      # --- STEP 2: Insert into PROFILE table SECOND ---
+      query_profile = f"""
+         INSERT INTO {target_table} ({id_col}, name, birthday, gender, address, phone_number)
+         VALUES (?, ?, ?, ?, ?, ?)
+      """
+      params_profile = (
+         data['id_num'], 
+         data['name'], 
+         data['birthday'], 
+         data['gender'], 
+         data['address'], 
+         data['phone']
       )
+
+      try:
+         # Execute User first
+         db.execute_query(query_user, params_user)
+         # Then execute Profile
+         db.execute_query(query_profile, params_profile)
+         
+         return True, f"Registration successful! Account created with ID: {data['id_num']}"
       
-      if success:
-         return {"status": True, "message": "Registration successful! Please login."}
+      except Exception as e:
+         print(f"Registration Error: {e}")
+         return False, f"Database Error: {str(e)}"
+   
+   def generate_next_id(role):
+      db = Database()
+      table = "mahasiswa" if role == "MAHASISWA" else "dosen"
+      column = "npm" if role == "MAHASISWA" else "nidn"
       
-      return {"status": False, "message": "Database error: Failed to save user data."}
+      query = f"SELECT {column} FROM {table} ORDER BY {column} DESC LIMIT 1"
+      result = db.fetch_one(query)
+      
+      if result and result[0]:
+         last_id = int(result[0])
+         return str(last_id + 1)
+      else:
+         return "220001" if role == "MAHASISWA" else "110001"
+      
+   @staticmethod
+   def update_user_data(data, role):
+      db = Database()
+      
+      role_lower = role.lower()
+      target_table = "mahasiswa" if role_lower == "mahasiswa" else "dosen"
+      id_col = "npm" if role_lower == "mahasiswa" else "nidn"
+
+      # 1. Update Profile
+      query_profile = f"""
+         UPDATE {target_table} 
+         SET name=?, birthday=?, gender=?, address=?, phone_number=?
+         WHERE {id_col}=?
+      """
+      params_profile = (data['name'], data['birthday'], data['gender'], 
+                        data['address'], data['phone'], data['id_num'])
+
+      # 2. Update Password di tabel users
+      query_user = "UPDATE users SET password=? WHERE username=?"
+      params_user = (data['password'], data['id_num'])
+
+      try:
+         db.execute_query(query_profile, params_profile)
+         db.execute_query(query_user, params_user)
+         return True, "User data and password updated successfully!"
+      except Exception as e:
+         return False, f"Update Failed: {str(e)}"
+   
+   @staticmethod
+   def delete_user(user_id, role):
+      db = Database()
+      
+      role_lower = role.lower()
+      target_table = "mahasiswa" if role_lower == "mahasiswa" else "dosen"
+      id_col = "npm" if role_lower == "mahasiswa" else "nidn"
+
+      # SQL Queries
+      query_profile = f"DELETE FROM {target_table} WHERE {id_col} = ?"
+      query_user = "DELETE FROM users WHERE username = ?"
+
+      try:
+         db.execute_query(query_profile, (user_id,))
+         db.execute_query(query_user, (user_id,))
+         
+         return True, "User deleted successfully."
+      except Exception as e:
+         return False, f"Delete Failed: {str(e)}"

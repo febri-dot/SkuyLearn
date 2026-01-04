@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import messagebox
 from app.controllers.admin.student_controller import StudentController
 from app.views.admin.register_ui import RegisterWindow
+from app.views.admin.edit_user_ui import EditUserWindow
+from app.controllers.auth_manager import AuthManager
+
 
 class StudentDataFrame(tk.Frame):
    def __init__(self, parent, controller):
@@ -106,14 +109,16 @@ class StudentDataFrame(tk.Frame):
 
    # --- Actions ---
    def delete_student(self, npm):
-      if messagebox.askyesno("Confirm Delete", f"Are you sure you want to delete NPM {npm}?\nThis action cannot be undone."):
-         if StudentController.delete_student(npm):
-               messagebox.showinfo("Success", "Student has been deleted.")
-               self.refresh()
+      if messagebox.askyesno("Confirm Delete", f"Are you sure you want to delete ID {npm}?\nThis will also delete the login account and this action cannot be undone."):
+         success, message = AuthManager.delete_user(npm, "MAHASISWA")
+         if success:
+               messagebox.showinfo("Success", "Student and account have been deleted successfully.")
+               self.refresh() 
+         else:
+               messagebox.showerror("Error", message)
 
    def edit_student(self, data):
-      # Nanti panggil Toplevel window di sini
-      messagebox.showinfo("Edit", f"Editing {data[1]}")
+      EditUserWindow(self, user_data=data, role="MAHASISWA")
 
    def add_student(self):
-      RegisterWindow(self, target_role="MAHASISWA")
+      RegisterWindow(self, role="MAHASISWA")
