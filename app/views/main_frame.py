@@ -3,7 +3,7 @@ from app.views.login_ui import LoginFrame
 from app.views.admin.dashboard_ui import DashboardFrame
 from app.views.dosen.dashboard_ui import DashboardDosen
 from app.views.mahasiswa.dashboard_ui import DashboardMahasiswa
-from app.views.student_data_ui import StudentDataFrame
+from app.views.admin.student_data_ui import StudentDataFrame
 from app.views.mahasiswa_mycourse_ui import MahasiswaMyCourseFrame
 from app.views.sidebar import SidebarFrame
 from app.views.profile_ui import ProfileFrame
@@ -22,6 +22,7 @@ class SkuylearnApp(tk.Tk):
 
       self.sidebar = SidebarFrame(parent=self.main_container, controller=self)
       self.sidebar.pack_propagate(False) 
+      self.sidebar.pack(side="left", fill="both", expand=True)
 
       self.content_area = tk.Frame(self.main_container, bg="white")
       self.content_area.pack(side="right", fill="both", expand=True)
@@ -29,11 +30,11 @@ class SkuylearnApp(tk.Tk):
       self.frames = {}
       pages = [
          {"class": LoginFrame, "access": "any"},
-         {"class": ProfileFrame, "access": "any"}
+         {"class": ProfileFrame, "access": "any"},
          {"class": DashboardFrame, "access": "admin"},
          {"class": StudentDataFrame, "access": "admin"},
          {"class": DashboardDosen, "access": "dosen"},
-         {"class": DashboardMahasiswa, "access": "mahasiswa"}
+         {"class": DashboardMahasiswa, "access": "mahasiswa"},
          {"class": MahasiswaMyCourseFrame, "access": "any", "alias": "CoursesListFrame"}
       ]
          
@@ -67,5 +68,3 @@ class SkuylearnApp(tk.Tk):
       if messagebox.askyesno("Logout", "Are you sure?"):
          self.current_user = None
          self.show_frame("LoginFrame")
-
-   
