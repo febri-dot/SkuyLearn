@@ -1,7 +1,10 @@
 import tkinter as tk
 from app.views.login_ui import LoginFrame
 from app.views.admin.dashboard_ui import DashboardFrame
+from app.views.dosen.dashboard_ui import DashboardDosen
+from app.views.mahasiswa.dashboard_ui import DashboardMahasiswa
 from app.views.student_data_ui import StudentDataFrame
+from app.views.mahasiswa_mycourse_ui import MahasiswaMyCourseFrame
 from app.views.sidebar import SidebarFrame
 from app.views.profile_ui import ProfileFrame
 
@@ -26,11 +29,14 @@ class SkuylearnApp(tk.Tk):
       self.frames = {}
       pages = [
          {"class": LoginFrame, "access": "any"},
-         {"class": DashboardFrame, "access": "any"},
-         {"class": StudentDataFrame, "access": "admin"},
          {"class": ProfileFrame, "access": "any"}
+         {"class": DashboardFrame, "access": "admin"},
+         {"class": StudentDataFrame, "access": "admin"},
+         {"class": DashboardDosen, "access": "dosen"},
+         {"class": DashboardMahasiswa, "access": "mahasiswa"}
+         {"class": MahasiswaMyCourseFrame, "access": "any", "alias": "CoursesListFrame"}
       ]
-
+         
       for page in pages:
          page_name = page["class"].__name__
          frame = page["class"](parent=self.content_area, controller=self)
@@ -61,3 +67,5 @@ class SkuylearnApp(tk.Tk):
       if messagebox.askyesno("Logout", "Are you sure?"):
          self.current_user = None
          self.show_frame("LoginFrame")
+
+   

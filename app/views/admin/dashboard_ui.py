@@ -42,7 +42,7 @@ class DashboardFrame(tk.Frame):
 
       self.course_card = self.create_stat_card(
          self.course_container, "TOTAL COURSES", "#9b59b6", 
-         lambda: self.controller.show_frame("CourseListFrame") 
+         lambda: self.controller.show_frame("MyCoursesList") 
       )
       self.course_card.pack(fill="x", padx=5)
 

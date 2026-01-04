@@ -10,6 +10,16 @@ class User:
 
    def get_dashboard_info(self):
       return f"Selamat datang, {self.__username}!"
+   
+   def get_dashboard_frame(self):
+        if self.role == "mahasiswa":
+            return "DashboardMahasiswa"
+        elif self.role == "dosen":
+            return "DashboardDosen"
+        elif self.role == "admin":
+            return "DashboardFrame"
+        else:
+            return "HomeFrame"
 
    def get_course_frame(self):
       return "StudentCourseFrame"
