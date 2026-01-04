@@ -1,6 +1,6 @@
 import tkinter as tk
 from app.views.login_ui import LoginFrame
-from app.views.dashboard_ui import DashboardFrame
+from app.views.admin.dashboard_ui import DashboardFrame
 from app.views.student_data_ui import StudentDataFrame
 from app.views.sidebar import SidebarFrame
 

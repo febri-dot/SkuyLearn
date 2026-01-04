@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from app.controllers.student_controller import StudentController
+from app.controllers.admin.student_controller import StudentController
 
 class StudentDataFrame(tk.Frame):
    def __init__(self, parent, controller):

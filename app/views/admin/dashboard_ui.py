@@ -1,5 +1,5 @@
 import tkinter as tk
-from app.controllers.dashboard import DashboardController
+from app.controllers.admin.dashboard import DashboardController
 
 class DashboardFrame(tk.Frame):
    def __init__(self, parent, controller):
