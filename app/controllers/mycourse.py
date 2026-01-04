@@ -1,28 +1,32 @@
 from app.connection import Database
 
 class MyCourseController:
-
     @staticmethod
     def get_courses_for_user(user):
         db = Database()
 
-        # ================= MAHASISWA =================
         if user.role == "mahasiswa":
             query = """
-            SELECT c.course_name, c.description
+            SELECT c.id, c.course_name, c.description
             FROM courses c
             JOIN enrollment_class e ON e.course_id = c.id
             WHERE e.npm = ?
             """
-            return db.fetch_all(query, (user.npm,))
-
-        # ================= DOSEN =================
-        elif user.role == "dosen":
+            rows = db.fetch_all(query, (user.npm,))
+        else:
             query = """
-            SELECT course_name, description
+            SELECT id, course_name, description
             FROM courses
             WHERE owner = ?
             """
-            return db.fetch_all(query, (user.nidn,))
+            rows = db.fetch_all(query, (user.nidn,))
 
-        return []
+        courses = []
+        for r in rows:
+            courses.append({
+                "id": r[0],
+                "course_name": r[1],
+                "description": r[2]
+            })
+
+        return courses

@@ -8,11 +8,11 @@ class MyCourseFrame(tk.Frame):
         self.controller = controller
 
         # ================= HEADER =================
-        header_frame = tk.Frame(self, bg="#f4f7f6")
-        header_frame.pack(fill="x", padx=40, pady=(30, 10))
+        header = tk.Frame(self, bg="#f4f7f6")
+        header.pack(fill="x", padx=40, pady=(30, 10))
 
         tk.Label(
-            header_frame,
+            header,
             text="My Courses",
             font=("Helvetica", 24, "bold"),
             bg="#f4f7f6",
@@ -25,42 +25,35 @@ class MyCourseFrame(tk.Frame):
 
     # ================= LOAD =================
     def load_courses(self):
-        # Bersihkan card lama
-        for widget in self.course_container.winfo_children():
-            widget.destroy()
+        for w in self.course_container.winfo_children():
+            w.destroy()
 
         user = self.controller.current_user
         if not user:
             return
 
-        # Ambil course sesuai role user
         courses = MyCourseController.get_courses_for_user(user)
 
         if not courses:
-            self.show_empty_state()
+            tk.Label(
+                self.course_container,
+                text="No courses available",
+                bg="#f4f7f6",
+                fg="#7f8c8d"
+            ).pack(pady=50)
             return
 
         NUM_COLUMNS = 3
         for i in range(NUM_COLUMNS):
-            self.course_container.grid_columnconfigure(i, weight=1, uniform="card")
+            self.course_container.grid_columnconfigure(i, weight=1)
 
-        for index, (name, desc) in enumerate(courses):
+        for index, course in enumerate(courses):
             row = index // NUM_COLUMNS
             col = index % NUM_COLUMNS
-            self.create_card(name, desc, row, col)
-
-    # ================= EMPTY =================
-    def show_empty_state(self):
-        tk.Label(
-            self.course_container,
-            text="Tidak ada course",
-            bg="#f4f7f6",
-            fg="#95a5a6",
-            font=("Arial", 12)
-        ).pack(pady=50)
+            self.create_card(course, row, col)
 
     # ================= CARD =================
-    def create_card(self, title, description, r, c):
+    def create_card(self, course, r, c):
         card = tk.Frame(
             self.course_container,
             bg="white",
@@ -72,13 +65,10 @@ class MyCourseFrame(tk.Frame):
         )
         card.grid(row=r, column=c, padx=12, pady=12, sticky="nsew")
 
-        # klik card
-        def on_click(event=None):
-            self.open_course(title)
+        title = course["course_name"]
+        description = course.get("description", "-")
 
-        card.bind("<Button-1>", on_click)
-
-        lbl_title = tk.Label(
+        tk.Label(
             card,
             text=title,
             font=("Helvetica", 13, "bold"),
@@ -86,43 +76,43 @@ class MyCourseFrame(tk.Frame):
             fg="#2d3436",
             wraplength=200,
             justify="left"
-        )
-        lbl_title.pack(anchor="w", fill="x")
-        lbl_title.bind("<Button-1>", on_click)
+        ).pack(anchor="w", fill="x")
 
         tk.Frame(card, bg="#3498db", height=3, width=40).pack(anchor="w", pady=10)
 
-        lbl_desc = tk.Label(
+        tk.Label(
             card,
-            text=description or "-",
+            text=description,
             font=("Arial", 10),
             bg="white",
             fg="#636e72",
             wraplength=200,
             justify="left"
-        )
-        lbl_desc.pack(anchor="w", fill="x", pady=(5, 10))
-        lbl_desc.bind("<Button-1>", on_click)
+        ).pack(anchor="w", fill="x", pady=(5, 10))
 
-        # Tombol teks
-        btn = tk.Label(
+        open_label = tk.Label(
             card,
-            text="Buka Materi →",
+            text="Open Course →",
             font=("Arial", 9, "bold"),
             bg="white",
             fg="#3498db",
             cursor="hand2"
         )
-        btn.pack(anchor="w")
-        btn.bind("<Button-1>", lambda e: self.open_course(title))
+        open_label.pack(anchor="w")
+
+        # ⬇️ TAMBAHKAN BIND INI
+        open_label.bind("<Button-1>", lambda e: self.open_course(course))
+
 
     # ================= NAVIGASI =================
-    def open_course(self, course_name):
-        # Simpan course aktif
-        self.controller.current_course = course_name
+    def open_course(self, course):
+        self.controller.current_course = course
 
-        # Pindah ke halaman assignment mahasiswa
-        self.controller.show_frame("AssignmentMahasiswaFrame")
+        role = self.controller.current_user.role
+        if role == "dosen":
+            self.controller.show_frame("AssignmentDosen")
+        else:
+            self.controller.show_frame("AssignmentMahasiswa")
 
     # ================= REFRESH =================
     def refresh(self):
