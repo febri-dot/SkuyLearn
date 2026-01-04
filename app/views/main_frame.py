@@ -2,8 +2,9 @@ import tkinter as tk
 from app.views.login_ui import LoginFrame
 from app.views.admin.dashboard_ui import DashboardFrame
 from app.views.dosen.dashboard_ui import DashboardDosen
+from app.views.dosen.assignment_ui import AssignmentDosen
 from app.views.mahasiswa.dashboard_ui import DashboardMahasiswa
-# from app.views.mahasiswa.assignment_ui import AssignmentMahasiswaFrame
+from app.views.mahasiswa.assignment_ui import AssignmentMahasiswa
 from app.views.admin.student_data_ui import StudentDataFrame
 from app.views.admin.lecturer_data_ui import LecturerDataFrame
 from app.views.admin.course_ui import CourseDataFrame
@@ -39,7 +40,9 @@ class SkuylearnApp(tk.Tk):
          {"class": LecturerDataFrame, "access": "admin"},
          {"class": DashboardDosen, "access": "dosen"},
          {"class": DashboardMahasiswa, "access": "mahasiswa"},
-         {"class": MyCourseFrame, "access": "any"}, 
+         {"class": MyCourseFrame, "access": "any"},
+         {"class": AssignmentMahasiswa, "access": "mahasiswa"},
+         {"class": AssignmentDosen, "access": "dosen"},
          {"class": CourseDataFrame, "access": "any"}, 
       ]
          
