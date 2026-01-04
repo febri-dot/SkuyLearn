@@ -39,6 +39,10 @@ class SidebarFrame(tk.Frame):
          
          tk.Button(self, text="My Course", **btn_style,
                      command=lambda: self.controller.show_frame(target_frame)).pack(fill="x", pady=1)
+        
+      tk.Button(self, text="Profile", **btn_style,
+               command=lambda: self.controller.show_frame("ProfileFrame")).pack(fill="x", pady=1)
+      
       tk.Button(self, text="Logout", bg="#e74c3c", fg="white", relief="flat",
                font=("Arial", 10, "bold"), cursor="hand2",
                command=self.controller.handle_logout).pack(side="bottom", fill="x", pady=20)

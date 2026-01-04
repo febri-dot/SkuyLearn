@@ -66,7 +66,7 @@ class RegisterFrame(tk.Frame):
          user = AuthManager.is_username_taken(username)
 
          if user.status:
-            
+            pass
          else:
             messagebox.showerror("Registration failed", academic_account.message)
          
