@@ -26,23 +26,30 @@ class SidebarFrame(tk.Frame):
          "activeforeground": "white"
       }
 
+      # 1. Tombol Home (Semua Role)
       tk.Button(self, text="Home", **btn_style,
                command=lambda: self.controller.show_frame("HomeFrame")).pack(fill="x", pady=1)
       
       user = self.controller.current_user
       if user:
-         target_frame = user.get_course_frame()
+         role = user.role.lower() # Ambil role user
          dashboard_frame = user.get_dashboard_frame()
+         target_frame = user.get_course_frame()
          
+         # 2. Tombol Dashboard (Semua Role)
          tk.Button(self, text="Dashboard", **btn_style,
-                   command=lambda f=dashboard_frame: self.controller.show_frame(f)).pack(fill="x", pady=1)
+                  command=lambda f=dashboard_frame: self.controller.show_frame(f)).pack(fill="x", pady=1)
          
-         tk.Button(self, text="My Course", **btn_style,
-                   command=lambda: self.controller.show_frame(target_frame)).pack(fill="x", pady=1)
-        
+         # 3. Tombol My Course (HANYA jika BUKAN admin)
+         if role != "admin":
+            tk.Button(self, text="My Course", **btn_style,
+                     command=lambda: self.controller.show_frame(target_frame)).pack(fill="x", pady=1)
+
+      # 4. Tombol Profile (Semua Role)
       tk.Button(self, text="Profile", **btn_style,
                command=lambda: self.controller.show_frame("ProfileFrame")).pack(fill="x", pady=1)
       
+      # 5. Tombol Logout
       tk.Button(self, text="Logout", bg="#e74c3c", fg="white", relief="flat",
                font=("Arial", 10, "bold"), cursor="hand2",
                command=self.controller.handle_logout).pack(side="bottom", fill="x", pady=20)

@@ -98,12 +98,11 @@ class MyCourseFrame(tk.Frame):
     # ================= NAVIGASI =================
     def open_course(self, course):
         self.controller.current_course = course
-
-        role = self.controller.current_user.role
-        if role == "dosen":
-            self.controller.show_frame("AssignmentDosen")
-        else:
-            self.controller.show_frame("AssignmentMahasiswa")
+        user = self.controller.current_user
+        
+        if user:
+            target = user.get_course_detail_frame()
+            self.controller.show_frame(target)
 
     # ================= REFRESH =================
     def refresh(self):

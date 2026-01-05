@@ -7,6 +7,10 @@ class User:
    @property
    def username(self):
       return self.__username
+   
+   @username.setter
+   def username(self, value):
+      self._username = value
 
    def get_dashboard_info(self):
       return f"Selamat datang, {self.__username}!"
@@ -23,3 +27,6 @@ class User:
 
    def get_course_frame(self):
       return "MahasiswaMyCourseFrame"
+   
+   def get_course_detail_frame(self):
+      return "CourseDetailFrame"

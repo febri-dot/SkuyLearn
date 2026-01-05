@@ -18,3 +18,7 @@ Thumbs.db
 # Virtual Environment (Jika pakai env)
 venv/
 env/
+
+# Upload files
+uploads/
+storage/

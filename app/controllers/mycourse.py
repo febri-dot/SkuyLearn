@@ -68,3 +68,48 @@ class MyCourseController:
             return True, "Course deleted successfully!"
         except Exception as e:
             return False, str(e)
+        
+    @staticmethod
+    def get_all_courses_with_owner():
+        """Mengambil semua course beserta nama dosen pengampunya"""
+        db = Database()
+        query = """
+            SELECT c.id, c.course_name, d.name as owner_name, c.description 
+            FROM courses c
+            JOIN dosen d ON c.owner = d.nidn
+        """
+        return db.fetch_all(query)
+
+    @staticmethod
+    def enroll_student(course_id, student_id, provided_key):
+        """Mendaftarkan mahasiswa ke dalam course dengan validasi key"""
+        db = Database()
+        try:
+            # 1. Ambil enrollment key yang asli dari tabel courses
+            course = db.fetch_one("SELECT enrollment_key FROM courses WHERE id = ?", (course_id,))
+            
+            if not course:
+                return False, "Course not found."
+            
+            # 2. Bandingkan key yang dimasukkan dengan yang ada di DB
+            # course[0] karena fetch_one mengembalikan tuple/list
+            if provided_key != course[0]:
+                return False, "Invalid Enrollment Key. Please try again."
+
+            # 3. Cek apakah mahasiswa sudah terdaftar (agar tidak double)
+            exists = db.fetch_one(
+                "SELECT * FROM enrollment_class WHERE course_id = ? AND npm = ?", 
+                (course_id, student_id)
+            )
+            if exists:
+                return False, "You are already enrolled in this course."
+            
+            # 4. Jika key benar dan belum terdaftar, lakukan pendaftaran
+            db.execute_query(
+                "INSERT INTO enrollment_class (course_id, npm) VALUES (?, ?)", 
+                (course_id, student_id)
+            )
+            return True, "Successfully enrolled!"
+            
+        except Exception as e:
+            return False, f"System error: {str(e)}"
