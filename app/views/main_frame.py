@@ -11,6 +11,7 @@ from app.views.admin.course_ui import CourseDataFrame
 from app.views.mycourse_ui import MyCourseFrame
 from app.views.sidebar import SidebarFrame
 from app.views.profile_ui import ProfileFrame
+from app.views.dosen.coursedosen_ui import CourseDosenFrame
 
 class SkuylearnApp(tk.Tk):
    def __init__(self):
@@ -44,6 +45,7 @@ class SkuylearnApp(tk.Tk):
          {"class": AssignmentMahasiswa, "access": "mahasiswa"},
          {"class": AssignmentDosen, "access": "dosen"},
          {"class": CourseDataFrame, "access": "any"}, 
+         {"class": CourseDosenFrame, "access": "dosen"}
       ]
          
       for page in pages:
