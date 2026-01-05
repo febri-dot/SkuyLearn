@@ -139,6 +139,9 @@ class AssignmentMahasiswa(tk.Frame):
 
         if not user or not course:
             return
+        
+        course_id = course[0]
+        course_name = course[1]
 
         for widget in self.content.winfo_children():
             widget.destroy()
@@ -148,7 +151,7 @@ class AssignmentMahasiswa(tk.Frame):
         # ===== FILTER BY COURSE =====
         assignments = [
             a for a in assignments
-            if a["course_name"] == course["course_name"]
+            if a["id"] == course_id
         ]
 
         if not assignments:

@@ -3,6 +3,7 @@ from app.views.login_ui import LoginFrame
 from app.views.admin.dashboard_ui import DashboardFrame
 from app.views.dosen.dashboard_ui import DashboardDosen
 from app.views.dosen.assignment_ui import AssignmentDosen
+from app.views.dosen.course_material_ui import CourseMaterial
 from app.views.mahasiswa.dashboard_ui import DashboardMahasiswa
 from app.views.mahasiswa.assignment_ui import AssignmentMahasiswa
 from app.views.admin.student_data_ui import StudentDataFrame
@@ -44,6 +45,7 @@ class SkuylearnApp(tk.Tk):
          {"class": AssignmentMahasiswa, "access": "mahasiswa"},
          {"class": AssignmentDosen, "access": "dosen"},
          {"class": CourseDataFrame, "access": "any"}, 
+         {"class": CourseMaterial, "access": "any"}, 
       ]
          
       for page in pages:
