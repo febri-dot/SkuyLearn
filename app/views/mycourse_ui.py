@@ -56,52 +56,43 @@ class MyCourseFrame(tk.Frame):
     def create_card(self, course, r, c):
         card = tk.Frame(
             self.course_container,
-            bg="white",
-            padx=20,
-            pady=20,
-            highlightbackground="#e1e8ed",
-            highlightthickness=1,
-            cursor="hand2"
+            bg="white", padx=20, pady=20,
+            highlightbackground="#e1e8ed", highlightthickness=1, cursor="hand2"
         )
         card.grid(row=r, column=c, padx=12, pady=12, sticky="nsew")
 
-        title = course["course_name"]
-        description = course.get("description", "-")
+        # Akses menggunakan index karena 'course' adalah tuple hasil fetch_all
+        # c[0]=id, c[1]=name, c[2]=desc, c[3]=key, c[4]=owner, c[5]=lecturer
+        title = course[1]
+        description = course[2] if course[2] else "No description"
 
         tk.Label(
-            card,
-            text=title,
-            font=("Helvetica", 13, "bold"),
-            bg="white",
-            fg="#2d3436",
-            wraplength=200,
-            justify="left"
+            card, text=title, font=("Helvetica", 13, "bold"),
+            bg="white", fg="#2d3436", wraplength=200, justify="left"
         ).pack(anchor="w", fill="x")
 
         tk.Frame(card, bg="#3498db", height=3, width=40).pack(anchor="w", pady=10)
 
         tk.Label(
-            card,
-            text=description,
-            font=("Arial", 10),
-            bg="white",
-            fg="#636e72",
-            wraplength=200,
-            justify="left"
+            card, text=description, font=("Arial", 10),
+            bg="white", fg="#636e72", wraplength=200, justify="left", height=3
         ).pack(anchor="w", fill="x", pady=(5, 10))
 
+        # Tampilkan Nama Dosen di bawah deskripsi
+        tk.Label(
+            card, text=f"👤 {course[5]}", font=("Arial", 8, "italic"),
+            bg="white", fg="#b2bec3"
+        ).pack(anchor="w", pady=(0, 10))
+
         open_label = tk.Label(
-            card,
-            text="Open Course →",
-            font=("Arial", 9, "bold"),
-            bg="white",
-            fg="#3498db",
-            cursor="hand2"
+            card, text="Open Course →", font=("Arial", 9, "bold"),
+            bg="white", fg="#3498db", cursor="hand2"
         )
         open_label.pack(anchor="w")
-
-        # ⬇️ TAMBAHKAN BIND INI
+        
+        # Bind klik pada label dan card-nya agar user mudah mengklik
         open_label.bind("<Button-1>", lambda e: self.open_course(course))
+        card.bind("<Button-1>", lambda e: self.open_course(course))
 
 
     # ================= NAVIGASI =================

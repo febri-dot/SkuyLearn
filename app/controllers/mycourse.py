@@ -3,15 +3,11 @@ from app.connection import Database
 class MyCourseController:
     @staticmethod
     def get_courses_for_user(user):
-        """
-        Fetch courses based on user role (Mahasiswa, Dosen, or Admin).
-        """
         db = Database()
-
-        # ================= MAHASISWA =================
+        # Samakan urutan kolom untuk semua role: id(0), name(1), desc(2), key(3), owner(4), lecturer_name(5)
         if user.role == "mahasiswa":
             query = """
-                SELECT c.id, c.course_name, c.description, c.enrollment_key, d.name
+                SELECT c.id, c.course_name, c.description, c.enrollment_key, c.owner, d.name
                 FROM courses c
                 JOIN enrollment_class e ON e.course_id = c.id
                 JOIN dosen d ON c.owner = d.nidn
@@ -19,7 +15,6 @@ class MyCourseController:
             """
             return db.fetch_all(query, (user.npm,))
 
-        # ================= DOSEN =================
         elif user.role == "dosen":
             query = """
                 SELECT c.id, c.course_name, c.description, c.enrollment_key, c.owner, d.name
@@ -29,7 +24,6 @@ class MyCourseController:
             """
             return db.fetch_all(query, (user.nidn,))
 
-        # ================= ADMIN (NEW: Get All) =================
         elif user.role == "admin":
             query = """
                 SELECT c.id, c.course_name, c.description, c.enrollment_key, c.owner, d.name
@@ -37,18 +31,16 @@ class MyCourseController:
                 LEFT JOIN dosen d ON c.owner = d.nidn
             """
             return db.fetch_all(query)
-
         return []
 
     @staticmethod
     def get_next_id():
         db = Database()
-        # Mengambil angka ID terakhir dari tabel courses
-        result = db.fetch_all("SELECT id FROM courses ORDER BY id DESC LIMIT 1")
-        if result:
-            last_id = int(result[0][0])
-            return last_id + 1
-        return 1 # Jika tabel kosong, mulai dari 1
+        # Gunakan MAX agar lebih aman jika ada data yang dihapus di tengah
+        result = db.fetch_all("SELECT MAX(id) FROM courses")
+        if result and result[0][0] is not None:
+            return int(result[0][0]) + 1
+        return 1
 
 
     @staticmethod
